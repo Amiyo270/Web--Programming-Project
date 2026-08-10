@@ -8,8 +8,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const allowedOrigins = [
+  /^http:\/\/localhost:\d+$/,
+  'http://127.0.0.1:5173',
+  'http://localhost:5173',
+  'http://127.0.0.1:3004',
+  'http://localhost:3004',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(cors({
-  origin: [/^http:\/\/localhost:\d+$/, 'http://127.0.0.1:5173', 'http://localhost:5173', 'http://127.0.0.1:3004', 'http://localhost:3004'],
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(express.json());

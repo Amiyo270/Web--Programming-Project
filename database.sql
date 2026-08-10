@@ -43,14 +43,48 @@ CREATE TABLE IF NOT EXISTS `showtimes` (
 CREATE TABLE IF NOT EXISTS `bookings` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `movie_id` INT(11) NOT NULL,
-  `showtime` DATETIME NOT NULL,
-  `seats` VARCHAR(255) NOT NULL,
+  `showtime_id` INT(11) NOT NULL,
+  `showtime_date` DATE NOT NULL,
+  `showtime_time` VARCHAR(10) NOT NULL,
+  `seats` JSON NOT NULL,
   `total_amount` DECIMAL(10, 2) NOT NULL,
   `contact_number` VARCHAR(20) NOT NULL,
+  `email` VARCHAR(255),
+  `customer_name` VARCHAR(255),
+  `payment_status` ENUM('pending', 'completed', 'failed') DEFAULT 'completed',
+  `booking_status` ENUM('active', 'cancelled') DEFAULT 'active',
+  `cancellation_reason` TEXT,
+  `refund_amount` DECIMAL(10, 2),
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `movie_id` (`movie_id`),
-  CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`) ON DELETE CASCADE
+  KEY `showtime_id` (`showtime_id`),
+  KEY `booking_status` (`booking_status`),
+  CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`showtime_id`) REFERENCES `showtimes` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ============================================
+-- Table: seat_bookings
+-- Tracks individual seat bookings for real-time availability
+-- ============================================
+CREATE TABLE IF NOT EXISTS `seat_bookings` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `showtime_id` INT(11) NOT NULL,
+  `showtime_date` DATE NOT NULL,
+  `seat_number` VARCHAR(10) NOT NULL,
+  `booking_id` INT(11),
+  `status` ENUM('available', 'booked', 'on_hold') DEFAULT 'available',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_seat_per_showtime` (`showtime_id`, `showtime_date`, `seat_number`),
+  KEY `showtime_id` (`showtime_id`),
+  KEY `booking_id` (`booking_id`),
+  KEY `status` (`status`),
+  CONSTRAINT `seat_bookings_ibfk_1` FOREIGN KEY (`showtime_id`) REFERENCES `showtimes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `seat_bookings_ibfk_2` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ============================================
