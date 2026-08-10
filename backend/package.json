@@ -1,0 +1,27 @@
+{
+  "name": "ticket-booker-backend",
+  "version": "1.0.0",
+  "description": "Backend for Movie Ticket Booking System",
+  "type": "module",
+  "main": "server.complete.js",
+  "scripts": {
+    "start": "node server.complete.js",
+    "dev": "node --watch server.complete.js",
+    "start:mysql": "node server.js",
+    "dev:mysql": "node --watch server.js",
+    "start:supabase": "node server.supabase.js",
+    "dev:supabase": "node --watch server.supabase.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.35.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mysql2": "^3.23.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
