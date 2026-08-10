@@ -20,8 +20,8 @@ COPY --from=builder /app/backend ./backend
 COPY --from=builder /app/frontend/dist ./frontend/dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY package.json package-lock.json ./
-COPY backend/.env ./backend/.env
 
+# Environment variables should be injected at runtime by the deployment platform
 WORKDIR /app/backend
 EXPOSE 5000
 CMD ["node", "server.complete.js"]
