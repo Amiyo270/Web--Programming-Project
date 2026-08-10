@@ -12,7 +12,8 @@ WORKDIR /app/frontend
 RUN npm install --legacy-peer-deps
 RUN npm run build
 
-# Install backend dependencies
+# Copy backend source and install backend dependencies
+WORKDIR /app
 COPY backend ./backend
 WORKDIR /app/backend
 RUN npm install --legacy-peer-deps
