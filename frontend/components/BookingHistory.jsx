@@ -51,54 +51,66 @@ const BookingHistory = ({ onClose, onCancel }) => {
   };
 
   const handleDownloadTicket = (booking) => {
-    const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const margin = 40;
-    let y = 60;
+    try {
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const margin = 40;
+      let y = 60;
 
-    pdf.setFillColor(15, 23, 42);
-    pdf.rect(0, 0, pageWidth, pdf.internal.pageSize.getHeight(), 'F');
+      pdf.setFillColor(15, 23, 42);
+      pdf.rect(0, 0, pageWidth, pdf.internal.pageSize.getHeight(), 'F');
 
-    pdf.setFontSize(26);
-    pdf.setTextColor('#ffffff');
-    pdf.text('Cinematic Ticket', margin, y);
+      pdf.setFontSize(26);
+      pdf.setTextColor('#ffffff');
+      pdf.text('Cinematic Ticket', margin, y);
 
-    y += 30;
-    pdf.setFontSize(14);
-    pdf.setTextColor('#94a3b8');
-    pdf.text('Booking Confirmation', margin, y);
+      y += 30;
+      pdf.setFontSize(14);
+      pdf.setTextColor('#94a3b8');
+      pdf.text('Booking Confirmation', margin, y);
 
-    y += 30;
-    pdf.setDrawColor('#334155');
-    pdf.setLineWidth(1);
-    pdf.line(margin, y, pageWidth - margin, y);
+      y += 30;
+      pdf.setDrawColor('#334155');
+      pdf.setLineWidth(1);
+      pdf.line(margin, y, pageWidth - margin, y);
 
-    const seatsList = Array.isArray(booking.seats) ? booking.seats : JSON.parse(booking.seats);
+      const seatsList = Array.isArray(booking.seats) ? booking.seats : (typeof booking.seats === 'string' ? JSON.parse(booking.seats) : []);
+      const title = String(booking.title || 'Movie Ticket');
+      const showDate = booking.showtime_date ? new Date(booking.showtime_date).toLocaleDateString() : 'N/A';
+      const showTime = String(booking.showtime_time || 'N/A');
+      const numSeats = String(seatsList.length);
+      const seatsStr = seatsList.join(', ');
+      const amountPaid = Number(booking.total_amount || 0).toFixed(2);
+      const contactNum = String(booking.contact_number || 'N/A');
 
-    y += 30;
-    pdf.setFontSize(12);
-    pdf.setTextColor('#cbd5e1');
-    pdf.text(`Movie: ${booking.title}`, margin, y);
-    y += 20;
-    pdf.text(`Date: ${new Date(booking.showtime_date).toLocaleDateString()}`, margin, y);
-    y += 20;
-    pdf.text(`Showtime: ${booking.showtime_time}`, margin, y);
-    y += 20;
-    pdf.text(`Seats: ${seatsList.join(', ')}`, margin, y);
-    y += 20;
-    pdf.text(`Total Tickets: ${seatsList.length}`, margin, y);
-    y += 20;
-    pdf.text(`Amount Paid: $${booking.total_amount.toFixed(2)}`, margin, y);
-    y += 20;
-    pdf.text(`Contact Number: ${booking.contact_number}`, margin, y);
+      y += 30;
+      pdf.setFontSize(12);
+      pdf.setTextColor('#cbd5e1');
+      pdf.text(`Movie: ${title}`, margin, y);
+      y += 20;
+      pdf.text(`Date: ${showDate}`, margin, y);
+      y += 20;
+      pdf.text(`Showtime: ${showTime}`, margin, y);
+      y += 20;
+      pdf.text(`Seats: ${seatsStr}`, margin, y);
+      y += 20;
+      pdf.text(`Total Tickets: ${numSeats}`, margin, y);
+      y += 20;
+      pdf.text(`Amount Paid: $${amountPaid}`, margin, y);
+      y += 20;
+      pdf.text(`Contact Number: ${contactNum}`, margin, y);
 
-    y += 30;
-    pdf.setTextColor('#ffffff');
-    pdf.setFontSize(18);
-    pdf.text('Enjoy your movie!', margin, y);
+      y += 30;
+      pdf.setTextColor('#ffffff');
+      pdf.setFontSize(18);
+      pdf.text('Enjoy your movie!', margin, y);
 
-    const fileName = `ticket-${booking.title.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.pdf`;
-    pdf.save(fileName);
+      const fileName = `ticket-${title.replace(/[\s/]+/g, '-').toLowerCase()}-${Date.now()}.pdf`;
+      pdf.save(fileName);
+    } catch (err) {
+      console.error('PDF Generation Error:', err);
+      alert('Could not generate PDF ticket. Error: ' + err.message);
+    }
   };
 
   const handleCancelBooking = async () => {
@@ -240,12 +252,14 @@ const BookingHistory = ({ onClose, onCancel }) => {
               {booking.booking_status === 'active' && (
                 <div className="flex gap-3">
                   <button
+                    type="button"
                     onClick={() => handleDownloadTicket(booking)}
                     className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition font-semibold"
                   >
                     Download Ticket
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       setCancellingBookingId(booking.id);
                       setShowCancelModal(true);
