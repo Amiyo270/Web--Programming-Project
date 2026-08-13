@@ -67,7 +67,8 @@ const AdminLogin = ({ setAdminToken }) => {
                 Secret Code
               </label>
               <input
-                id="secret-code"
+                id="secure-admin-entry"
+                name="secure-admin-entry"
                 type="password"
                 value={secretCode}
                 onChange={(e) => setSecretCode(e.target.value)}
@@ -75,6 +76,9 @@ const AdminLogin = ({ setAdminToken }) => {
                 className="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                 disabled={loading}
                 required
+                autoComplete="new-password"
+                data-lpignore="true"
+                data-1p-ignore="true"
               />
             </div>
 
