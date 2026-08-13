@@ -22,7 +22,18 @@ const App = () => {
   });
   const [movies, setMovies] = useState(FALLBACK_MOVIES);
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [bookingDetails, setBookingDetails] = useState(null);
+  const [bookingDetails, setBookingDetails] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = window.localStorage.getItem('amiyo-latest-booking');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {}
+      }
+    }
+    return null;
+  });
+  
   const [currentBooking, setCurrentBooking] = useState({
     selectedSeats: [],
     showtimeId: null,
@@ -35,6 +46,12 @@ const App = () => {
     document.documentElement.setAttribute('data-theme', theme);
     window.localStorage.setItem('amiyo-theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    if (bookingDetails) {
+      window.localStorage.setItem('amiyo-latest-booking', JSON.stringify(bookingDetails));
+    }
+  }, [bookingDetails]);
 
   const generateSeats = (rows = 8, cols = 12) => {
     const seats = [];
