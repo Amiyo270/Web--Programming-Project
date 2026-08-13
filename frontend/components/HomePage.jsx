@@ -61,6 +61,12 @@ const HomePage = ({ movies, setSelectedMovie, theme, setTheme }) => {
               >
                 My Bookings
               </button>
+              <a
+                href="/admin/#/login"
+                className="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-4 py-2 text-white transition hover:bg-indigo-500"
+              >
+                Admin
+              </a>
             </div>
           </div>
         </header>
