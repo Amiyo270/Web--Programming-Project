@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeftIcon, XIcon, PlusIcon, TrashIcon, EditIcon } from './icons.jsx';
+import { getApiUrl } from '../api.js';
 
 const AdminPanel = ({ setAdminToken, adminToken, onLogout }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -25,7 +26,7 @@ const AdminPanel = ({ setAdminToken, adminToken, onLogout }) => {
   const [showtimeForm, setShowtimeForm] = useState({ time: '', movie_id: '' });
   const [showtimesByMovie, setShowtimesByMovie] = useState({});
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = getApiUrl();
 
   useEffect(() => {
     if (activeTab === 'dashboard') fetchStatistics();

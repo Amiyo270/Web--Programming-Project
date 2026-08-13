@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeftIcon, CheckCircleIcon } from './icons.jsx';
+import { getApiUrl } from '../api.js';
 
 const CheckoutPage = ({
   movieDetails,
@@ -19,7 +20,7 @@ const CheckoutPage = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = getApiUrl();
 
   const validateForm = () => {
     if (!contactNumber.trim() || !/^\d{10,}$/.test(contactNumber.trim())) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { FilmIcon, LogOutIcon } from './icons.jsx';
+import { getApiUrl } from '../api.js';
 
 const MovieForm = ({ movie = null, onSubmit, onCancel, theme, isLoading }) => {
   const [formData, setFormData] = useState({
@@ -108,7 +109,7 @@ const AdminDashboard = ({ token, onLogout, movies, setMovies }) => {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = getApiUrl();
 
   const handleAddMovie = async (formData) => {
     setIsLoading(true);

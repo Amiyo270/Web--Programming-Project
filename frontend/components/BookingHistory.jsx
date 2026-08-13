@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronLeftIcon, XIcon } from './icons.jsx';
+import { getApiUrl } from '../api.js';
 
 const BookingHistory = ({ onClose, onCancel }) => {
   const [searchContact, setSearchContact] = useState('');
@@ -11,7 +12,7 @@ const BookingHistory = ({ onClose, onCancel }) => {
   const [cancelReason, setCancelReason] = useState('');
   const [showCancelModal, setShowCancelModal] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = getApiUrl();
 
   const handleSearch = async (e) => {
     e.preventDefault();

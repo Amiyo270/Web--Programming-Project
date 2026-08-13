@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArmchairIcon } from './icons.jsx';
+import { getApiUrl } from '../api.js';
 
 const SeatSelection = ({ showtimeId, selectedDate, onSeatsSelect, moviePrice }) => {
   const [seats, setSeats] = useState([]);
@@ -8,7 +9,7 @@ const SeatSelection = ({ showtimeId, selectedDate, onSeatsSelect, moviePrice }) 
   const [error, setError] = useState('');
   const [totalPrice, setTotalPrice] = useState(0);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = getApiUrl();
 
   useEffect(() => {
     fetchSeatAvailability();

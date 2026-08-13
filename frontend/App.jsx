@@ -7,6 +7,7 @@ import ReceiptPage from './components/ReceiptPage.jsx';
 import BookingHistory from './components/BookingHistory.jsx';
 import { SeatStatus } from './types.js';
 import { FALLBACK_MOVIES } from './constants.js';
+import { getApiUrl } from './api.js';
 
 const App = () => {
   const [theme, setTheme] = useState(() => {
@@ -54,7 +55,7 @@ const App = () => {
 
   const fetchMovies = async () => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const API_URL = getApiUrl();
       const response = await fetch(`${API_URL}/api/movies`);
       if (response.ok) {
         const data = await response.json();

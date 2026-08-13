@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SeatSelection from './SeatSelection.jsx';
 import { ChevronLeftIcon, CalendarIcon, ClockIcon } from './icons.jsx';
+import { getApiUrl } from '../api.js';
 
 const BookingPage = ({ selectedMovie, setCurrentBooking }) => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const BookingPage = ({ selectedMovie, setCurrentBooking }) => {
   const [error, setError] = useState('');
   const [showStep, setShowStep] = useState(1); // Step 1: Date/Showtime, Step 2: Seats, Step 3: Checkout
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = getApiUrl();
 
   useEffect(() => {
     if (selectedMovie) {

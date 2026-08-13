@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FilmIcon } from './icons.jsx';
+import { getApiUrl } from '../api.js';
 
 const AdminLogin = ({ setAdminToken }) => {
   const [secretCode, setSecretCode] = useState('');
@@ -8,7 +9,7 @@ const AdminLogin = ({ setAdminToken }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_URL = getApiUrl();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -22,18 +23,25 @@ const AdminLogin = ({ setAdminToken }) => {
         body: JSON.stringify({ secretCode }),
       });
 
-      const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const data = contentType.includes('application/json')
+        ? await response.json()
+        : null;
 
-      if (response.ok) {
+      if (response.ok && data?.token) {
         localStorage.setItem('admin_token', data.token);
         setAdminToken(data.token);
         navigate('/dashboard');
+      } else if (data?.error) {
+        setError(data.error);
+      } else if (response.status === 404) {
+        setError(`Backend API not found at ${API_URL}. Check Railway deployment and VITE_API_URL on Vercel.`);
       } else {
-        setError(data.error || 'Invalid secret code');
+        setError(`Server error (${response.status}). Verify the backend is running on Railway.`);
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError(`Failed to connect to server. Make sure the backend is running on ${API_URL}`);
+      setError(`Failed to connect to ${API_URL}. Check VITE_API_URL includes https:// and Railway is running.`);
     } finally {
       setLoading(false);
     }

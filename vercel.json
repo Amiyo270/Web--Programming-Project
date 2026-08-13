@@ -1,0 +1,11 @@
+{
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
+    { "source": "/admin/login", "destination": "/admin/#/login" },
+    { "source": "/admin/dashboard", "destination": "/admin/#/dashboard" },
+    { "source": "/admin", "destination": "/admin/index.html" },
+    { "source": "/admin/", "destination": "/admin/index.html" },
+    { "source": "/((?!assets|admin).*)", "destination": "/index.html" }
+  ]
+}
