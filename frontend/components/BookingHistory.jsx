@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { jsPDF } from 'jspdf';
 import { ChevronLeftIcon, XIcon } from './icons.jsx';
 import { getApiUrl } from '../api.js';
 
@@ -47,6 +48,57 @@ const BookingHistory = ({ onClose, onCancel }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDownloadTicket = (booking) => {
+    const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 40;
+    let y = 60;
+
+    pdf.setFillColor(15, 23, 42);
+    pdf.rect(0, 0, pageWidth, pdf.internal.pageSize.getHeight(), 'F');
+
+    pdf.setFontSize(26);
+    pdf.setTextColor('#ffffff');
+    pdf.text('Cinematic Ticket', margin, y);
+
+    y += 30;
+    pdf.setFontSize(14);
+    pdf.setTextColor('#94a3b8');
+    pdf.text('Booking Confirmation', margin, y);
+
+    y += 30;
+    pdf.setDrawColor('#334155');
+    pdf.setLineWidth(1);
+    pdf.line(margin, y, pageWidth - margin, y);
+
+    const seatsList = Array.isArray(booking.seats) ? booking.seats : JSON.parse(booking.seats);
+
+    y += 30;
+    pdf.setFontSize(12);
+    pdf.setTextColor('#cbd5e1');
+    pdf.text(`Movie: ${booking.title}`, margin, y);
+    y += 20;
+    pdf.text(`Date: ${new Date(booking.showtime_date).toLocaleDateString()}`, margin, y);
+    y += 20;
+    pdf.text(`Showtime: ${booking.showtime_time}`, margin, y);
+    y += 20;
+    pdf.text(`Seats: ${seatsList.join(', ')}`, margin, y);
+    y += 20;
+    pdf.text(`Total Tickets: ${seatsList.length}`, margin, y);
+    y += 20;
+    pdf.text(`Amount Paid: $${booking.total_amount.toFixed(2)}`, margin, y);
+    y += 20;
+    pdf.text(`Contact Number: ${booking.contact_number}`, margin, y);
+
+    y += 30;
+    pdf.setTextColor('#ffffff');
+    pdf.setFontSize(18);
+    pdf.text('Enjoy your movie!', margin, y);
+
+    const fileName = `ticket-${booking.title.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.pdf`;
+    pdf.save(fileName);
   };
 
   const handleCancelBooking = async () => {
@@ -186,15 +238,23 @@ const BookingHistory = ({ onClose, onCancel }) => {
               </div>
 
               {booking.booking_status === 'active' && (
-                <button
-                  onClick={() => {
-                    setCancellingBookingId(booking.id);
-                    setShowCancelModal(true);
-                  }}
-                  className="w-full px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition font-semibold"
-                >
-                  Cancel Booking
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => handleDownloadTicket(booking)}
+                    className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition font-semibold"
+                  >
+                    Download Ticket
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCancellingBookingId(booking.id);
+                      setShowCancelModal(true);
+                    }}
+                    className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition font-semibold"
+                  >
+                    Cancel Booking
+                  </button>
+                </div>
               )}
             </div>
           ))}
