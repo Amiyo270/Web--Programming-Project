@@ -137,5 +137,10 @@ npm run dev
 
 ## 👨‍💻 Developed By
 
-**Amiyo** — Web Programming Project  
-Submitted as part of the Web Programming course assignment.
+| Role | Name |
+|---|---|
+| **Frontend Development** | Amiyo Bushon Chakraborty |
+| **Backend Development** | Shuvo Sutradhar |
+| **Database Architecture** | Diya Anowar |
+
+Submitted as part of the **Web Programming** course assignment.
