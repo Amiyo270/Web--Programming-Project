@@ -276,7 +276,12 @@ app.get('/api/admin/bookings', authMiddleware, async (req, res) => {
     );
     connection.release();
 
-    res.json(bookings);
+    const parsed = bookings.map(b => ({
+      ...b,
+      total_amount: parseFloat(b.total_amount) || 0,
+      seats: typeof b.seats === 'string' ? JSON.parse(b.seats) : b.seats
+    }));
+    res.json(parsed);
   } catch (error) {
     console.error('Error fetching bookings:', error);
     res.status(500).json({ error: 'Failed to fetch bookings' });
@@ -301,7 +306,13 @@ app.get('/api/admin/statistics', authMiddleware, async (req, res) => {
     `);
     connection.release();
 
-    res.json(stats[0] || { total_bookings: 0, total_revenue: 0, today_bookings: 0, today_revenue: 0 });
+    const raw = stats[0] || { total_bookings: 0, total_revenue: 0, today_bookings: 0, today_revenue: 0 };
+    res.json({
+      total_bookings: parseInt(raw.total_bookings) || 0,
+      total_revenue: parseFloat(raw.total_revenue) || 0,
+      today_bookings: parseInt(raw.today_bookings) || 0,
+      today_revenue: parseFloat(raw.today_revenue) || 0
+    });
   } catch (error) {
     console.error('Error fetching statistics:', error);
     res.status(500).json({ error: 'Failed to fetch statistics' });
@@ -513,6 +524,7 @@ app.get('/api/bookings/:id', async (req, res) => {
     const booking = bookings[0];
     // mysql2 auto-parses JSON columns; only parse if still a string
     if (typeof booking.seats === 'string') booking.seats = JSON.parse(booking.seats);
+    booking.total_amount = parseFloat(booking.total_amount) || 0;
     
     res.json(booking);
   } catch (error) {
@@ -542,6 +554,7 @@ app.post('/api/bookings/search/contact', async (req, res) => {
 
     const parsedBookings = bookings.map(b => ({
       ...b,
+      total_amount: parseFloat(b.total_amount) || 0,
       seats: typeof b.seats === 'string' ? JSON.parse(b.seats) : b.seats
     }));
 
