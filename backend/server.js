@@ -95,7 +95,8 @@ app.get('/api/movies', async (req, res) => {
     );
     connection.release();
     
-    res.json(movies);
+    const parsed = movies.map(m => ({ ...m, price: parseFloat(m.price) || 0 }));
+    res.json(parsed);
   } catch (error) {
     console.error('Error fetching movies:', error);
     res.status(500).json({ error: 'Failed to fetch movies' });
