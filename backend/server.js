@@ -511,7 +511,8 @@ app.get('/api/bookings/:id', async (req, res) => {
     }
 
     const booking = bookings[0];
-    booking.seats = JSON.parse(booking.seats);
+    // mysql2 auto-parses JSON columns; only parse if still a string
+    if (typeof booking.seats === 'string') booking.seats = JSON.parse(booking.seats);
     
     res.json(booking);
   } catch (error) {
@@ -541,7 +542,7 @@ app.post('/api/bookings/search/contact', async (req, res) => {
 
     const parsedBookings = bookings.map(b => ({
       ...b,
-      seats: JSON.parse(b.seats)
+      seats: typeof b.seats === 'string' ? JSON.parse(b.seats) : b.seats
     }));
 
     res.json(parsedBookings);
@@ -600,7 +601,6 @@ app.post('/api/bookings/:id/cancel', async (req, res) => {
     );
 
     // Release booked seats
-    const seats = JSON.parse(booking.seats);
     await connection.query(
       `UPDATE seat_bookings 
        SET status = 'available', booking_id = NULL, updated_at = NOW()
